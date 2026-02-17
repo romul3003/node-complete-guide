@@ -1,8 +1,8 @@
-const fs = require("fs");
-const path = require("path");
-const rootDir = require("../util/path");
+const fs = require('fs');
+const path = require('path');
+const rootDir = require('../util/path');
 
-const filePath = path.join(rootDir, "data", "products.json");
+const filePath = path.join(rootDir, 'data', 'products.json');
 
 const getProductsFromFile = (cb) => {
   fs.readFile(filePath, (err, fileContent) => {
@@ -14,8 +14,11 @@ const getProductsFromFile = (cb) => {
 };
 
 module.exports = class Product {
-  constructor(title) {
+  constructor(title, imageUrl, description, price) {
     this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
   }
 
   save() {
