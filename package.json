@@ -20,6 +20,6 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-handlebars": "^8.0.3",
-    "pug": "^3.0.3"
+    "mysql2": "^3.18.1"
   }
 }
