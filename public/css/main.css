@@ -19,9 +19,16 @@ form {
   display: inline;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
+.centered {
+  text-align: center;
+}
+
+.image {
+  height: 20rem;
+}
+
+.image img {
+  height: 100%;
 }
 
 .main-header {
@@ -195,6 +202,17 @@ img {
 .btn:hover,
 .btn:active {
   background-color: #00695c;
+  color: white;
+}
+
+.btn.danger {
+  color: red;
+  border-color: red;
+}
+
+.btn.danger:hover,
+.btn.danger:active {
+  background: red;
   color: white;
 }
 
