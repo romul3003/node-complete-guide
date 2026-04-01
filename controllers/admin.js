@@ -11,13 +11,10 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   const { title, imageUrl, description, price } = req.body;
 
-  req.user
-    .createProduct({
-      title,
-      imageUrl,
-      description,
-      price,
-    })
+  const product = new Product(title, price, description, imageUrl, null, req.user._id);
+
+  product
+    .save()
     .then(() => {
       console.log('Product created successfully');
       res.redirect('/admin/products');
@@ -35,11 +32,9 @@ exports.getEditProduct = (req, res, next) => {
   }
 
   const prodId = req.params.productId;
-  req.user
-    .getProducts({ where: { id: prodId } })
-    .then((products) => {
-      const product = products[0];
 
+  Product.findById(prodId)
+    .then((product) => {
       if (!product) {
         return res.redirect('/');
       }
@@ -57,19 +52,10 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const { productId, title, imageUrl, description, price } = req.body;
 
-  Product.findByPk(productId)
-    .then((product) => {
-      if (!product) {
-        return res.redirect('/');
-      }
+  const product = new Product(title, price, description, imageUrl, productId);
 
-      product.title = title;
-      product.imageUrl = imageUrl;
-      product.description = description;
-      product.price = price;
-
-      return product.save();
-    })
+  product
+    .save()
     .then(() => {
       console.log('Product updated successfully');
       res.redirect('/admin/products');
@@ -80,14 +66,7 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const { productId } = req.body;
 
-  Product.findByPk(productId)
-    .then((product) => {
-      if (!product) {
-        return res.redirect('/');
-      }
-
-      return product.destroy();
-    })
+  Product.deleteById(productId)
     .then(() => {
       console.log('Product deleted successfully');
       res.redirect('/admin/products');
@@ -96,8 +75,7 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  req.user
-    .getProducts()
+  Product.fetchAll()
     .then((products) => {
       res.render('admin/products', {
         prods: products,
