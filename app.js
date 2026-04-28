@@ -3,9 +3,9 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const errorController = require('./controllers/error');
-const mongoConnect = require('./util/database').mongoConnect;
 const User = require('./models/user');
 
 const app = express();
@@ -27,9 +27,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findById('69c65b90144384b3e0a50c48')
+  User.findById('69d6083c598a4f73ff611991')
     .then((user) => {
-      req.user = new User(user.name, user.email, user.cart, user._id);
+      req.user = user;
       next();
     })
     .catch((err) => console.log(err));
@@ -40,7 +40,23 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  console.log('Server is running on port 3000');
-  app.listen(3000);
-});
+mongoose
+  .connect(process.env.MONGO_DB_URI)
+  .then(() => {
+    User.findOne().then((user) => {
+      if (!user) {
+        const user = new User({
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          cart: { items: [] },
+        });
+
+        return user.save();
+      }
+    });
+  })
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(3000);
+  })
+  .catch((err) => console.log(err));
